@@ -1,0 +1,98 @@
+% Chapter Template
+
+\chapter{Java 8: Streams and Lambda expressions} % Main chapter title
+
+\label{Chapter2} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
+
+%-----------------------------------
+%	SECTION 1
+%-----------------------------------
+\section{Definiție}
+
+O rețea Bayesiană este un model probabilistic grafic care reprezintă un set de variabile aleatoare și dependețele condiționale dintre ele sub forma unui graf orientat aciclic (DAG).
+
+Fiecare nod al grafului reprezintă o variabilă aleatoare, iar arcele dintre noduri reprezintă dependențele probabilistice dintre nodurile conectate.
+
+Clasificatorul naiv Bayes presupune că toate variabilele sunt independent condiționate, în contrast cu rețelele Bayesiene, care permite condiționarea independentă aplicată la subseturi de variabile.
+
+Aceste modele probabilistice, ca modelul naiv Bayes sau modelele logistice de regresie sunt diferite de alte modele de reprezentare, cum ar fi arborii de decizie, prin faptul că produc estimări probabilistice în loc de clasificări exacte.
+
+Pentru fiecare clasă de valori, estimează probabilitatea ca o instanță dată să aparțină acelei clase.
+Aceste estimări probabilistice sunt mai utile decât simple predicții, deoarece pot fi clasate, iar costul acestora poate fi minimizat.
+
+%-----------------------------------
+%	SECTION 2
+%-----------------------------------
+\section{Deducția rețelei Bayesiene}
+
+Deducția rețelei Bayesiene se realizează în 3 pași:
+\begin{itemize}
+\item Deducția de variabile neobservate; rețeaua poate fi folosită pentru a oferi informații probabilistice despre relațiile dintre variabile.
+\item Învățarea probabilităților condiționale; pentru fiecare nod specificarea distribuției probabilităților condiționate de părinții nodului respectiv.
+\item Învățarea structurii rețelei și construirea grafului.
+\end{itemize}
+
+%-----------------------------------
+%	SECTION 3
+%-----------------------------------
+\section{Învățarea rețelei Bayesiene}
+
+Algoritmul pentru construirea rețelei Bayesiene are două componente: o funcție pentru evaluarea rețelei în funcție de date și o metodă de a genera toate rețelele posibile și a o selecta pe cea mai bună.
+
+După definirea structurii grafului care reprezintă rețeaua, calculul probabilităților condiționale este ușor de realizat, necesitând doar calculul frecvențelor relative a combinațiilor de atribute asociate din setul de date.
+
+% %-----------------------------------
+% %	SECTION 4
+% %-----------------------------------
+\section{Reprezentarea datelor}
+
+Pentru reprezentarea datelor, un format foarte răspândit este formatul ARFF, datele fiind stocate într-un fișier cu formatul .arff. Acest format permite definirea atributelor și a valorilor posibile pentru fiecare atribut, cât și un set de instanțe, cu valori specificate pentru fiecare atribut.
+
+Exemplu de fișier .arff:\\
+@relation skiing \\
+@attribute temperature \{ hot, mild, cool \}\\
+@attribute windy \{ true, false \}\\
+@attribute outlook \{ sunny, overcast \}\\
+@attribute snowCover \{ low, medium, high \}\\
+@attribute rainfall \{ sleet, rain, snow, none \}\\
+@attribute ski? \{ yes, no \}\\
+@data\\
+hot, false, overcast, medium, none, no\\
+hot, true, sunny, high, none, no\\
+hot, true, sunny, high, sleet, no\\
+mild, false, sunny, high, none, yes\\
+mild, false, sunny, low, none, no\\
+cool, true, sunny, medium, none, yes\\
+cool, true, overcast, medium, snow, no\\
+
+Acest set de date reprezintă starea unei pârtii de ski, caracterizată de 5 atribute, cu valorile corespunzătoare:\\
+temperature \{ hot, mild, cool \}\\
+windy \{ true, false \}\\
+outlook \{ sunny, overcast \}\\
+snowCover \{ low, medium, high \}\\
+rainfall \{ sleet, rain, snow, none \}\\
+
+%-----------------------------------
+%	SUBSECTION 4
+%-----------------------------------
+\section{Algoritm de învățare a structurii}
+
+Odată reprezentate datele, avem nevoie de algoritmi specifici pentru a construi și inițializa structura rețelei Bayesiene.
+
+Un exemplu de structură pentru setul de date despre starea pârtiei de ski poate fi observat în Figura ~\ref{fig:structure}.
+
+\begin{figure}[th]
+\centering
+\includegraphics[scale=0.4]{Figures/structure}
+\decoRule
+\caption{Strucura unei rețele bayesiene}
+\label{fig:structure}
+\end{figure}
+
+Unul dintre cei mai eficienți algoritmi pentru construirea structurii este algorimul K2, iar pentru calcul costului unui graf în cadrul algorimului de căutare, funcția de scor K2, propusă de Cooper and Herskovits (1992). \cite{carvalho2009scoring}
+
+\subsection{Algoritmul K2}
+
+Algoritmul K2 începe cu o ordine dată a atributelor (noduri) și încearcă să adauge o muchie de la nodurile procesate la cel curent, astfel încât scorul rețelei să fie maxim.
+
+Numărul maxim de părinți poate fi restricționat pentru un nod (la 2 de exemplu) pentru a evita overfitting-ul. În funcția de scor K2 și în calcului tabelelor probabilităților condiționale se poate folosi estimatorul Laplace. \cite{ruiz2005illustration}
