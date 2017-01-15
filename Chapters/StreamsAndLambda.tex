@@ -4,95 +4,86 @@
 
 \label{Chapter2} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
 
-%-----------------------------------
-%	SECTION 1
-%-----------------------------------
-\section{Definiție}
+Streams and lamba expressions are the most important new features introduced in Java 8 version. Stream has been added as a method in the Collection interface and other data sources. They allow processing the elements of a data structure to generate new structures and filter the data. They can be used to implement algorithms using the map and reduce technique.
 
-O rețea Bayesiană este un model probabilistic grafic care reprezintă un set de variabile aleatoare și dependețele condiționale dintre ele sub forma unui graf orientat aciclic (DAG).
-
-Fiecare nod al grafului reprezintă o variabilă aleatoare, iar arcele dintre noduri reprezintă dependențele probabilistice dintre nodurile conectate.
-
-Clasificatorul naiv Bayes presupune că toate variabilele sunt independent condiționate, în contrast cu rețelele Bayesiene, care permite condiționarea independentă aplicată la subseturi de variabile.
-
-Aceste modele probabilistice, ca modelul naiv Bayes sau modelele logistice de regresie sunt diferite de alte modele de reprezentare, cum ar fi arborii de decizie, prin faptul că produc estimări probabilistice în loc de clasificări exacte.
-
-Pentru fiecare clasă de valori, estimează probabilitatea ca o instanță dată să aparțină acelei clase.
-Aceste estimări probabilistice sunt mai utile decât simple predicții, deoarece pot fi clasate, iar costul acestora poate fi minimizat.
-
-%-----------------------------------
-%	SECTION 2
-%-----------------------------------
-\section{Deducția rețelei Bayesiene}
-
-Deducția rețelei Bayesiene se realizează în 3 pași:
+Parallel streams are a special kind of streams which operates in a parallel way. The elements involved in the use of parallel streams are:
 \begin{itemize}
-\item Deducția de variabile neobservate; rețeaua poate fi folosită pentru a oferi informații probabilistice despre relațiile dintre variabile.
-\item Învățarea probabilităților condiționale; pentru fiecare nod specificarea distribuției probabilităților condiționate de părinții nodului respectiv.
-\item Învățarea structurii rețelei și construirea grafului.
+\item The Stream interface: defines the operations that can be performed on a stream.
+\item Optional: a container object
+\item Collectors: implements the reduction operations that are used in a stream sequence of operations.
+\item Lambda expressions: most stream methods accept a lambda expression as a parameter, allow more compact operations implementaions.
 \end{itemize}
 
-%-----------------------------------
-%	SECTION 3
-%-----------------------------------
-\section{Învățarea rețelei Bayesiene}
+\section{Lambda Expression}
 
-Algoritmul pentru construirea rețelei Bayesiene are două componente: o funcție pentru evaluarea rețelei în funcție de date și o metodă de a genera toate rețelele posibile și a o selecta pe cea mai bună.
+A lambda expression can be understood as a concise representation of an anonymous function that can be passed around: it doesn’t have a name, but it has a list of parameters, a body, a return type, and also possibly a list of exceptions that can be thrown.
 
-După definirea structurii grafului care reprezintă rețeaua, calculul probabilităților condiționale este ușor de realizat, necesitând doar calculul frecvențelor relative a combinațiilor de atribute asociate din setul de date.
+\begin{itemize}
+\item Anonymous - it doesn’t have an explicit name like a method would normally have.
+\item Function - a lambda isn’t associated with a particular class like a method is. But like a method, a lambda has a list of parameters, a body, a return type, and a possible list of exceptions that can be thrown.
+\item Passed around - a lambda expression can be passed as argument to a method or stored in a variable.
+\item Concise - you don’t need to write a lot of boilerplate like you do for anonymous classes.
+\end{itemize}
 
-% %-----------------------------------
-% %	SECTION 4
-% %-----------------------------------
-\section{Reprezentarea datelor}
+Lambdas technically don’t let you do anything that you couldn’t do prior to Java 8. But you no longer have to write clumsy code using anonymous classes to benefit from behavior parameterization. The net result is that your code will be clearer and more flexible. For example, using a lambda expression you can create a custom Comparator object in a more concise way:
 
-Pentru reprezentarea datelor, un format foarte răspândit este formatul ARFF, datele fiind stocate într-un fișier cu formatul .arff. Acest format permite definirea atributelor și a valorilor posibile pentru fiecare atribut, cât și un set de instanțe, cu valori specificate pentru fiecare atribut.
+Without lambda expression:
 
-Exemplu de fișier .arff:\\
-@relation skiing \\
-@attribute temperature \{ hot, mild, cool \}\\
-@attribute windy \{ true, false \}\\
-@attribute outlook \{ sunny, overcast \}\\
-@attribute snowCover \{ low, medium, high \}\\
-@attribute rainfall \{ sleet, rain, snow, none \}\\
-@attribute ski? \{ yes, no \}\\
-@data\\
-hot, false, overcast, medium, none, no\\
-hot, true, sunny, high, none, no\\
-hot, true, sunny, high, sleet, no\\
-mild, false, sunny, high, none, yes\\
-mild, false, sunny, low, none, no\\
-cool, true, sunny, medium, none, yes\\
-cool, true, overcast, medium, snow, no\\
+\begin{lstlisting}
+Comparator<Apple> byWeight = new Comparator<Apple>() {
+    public int compare(Apple a1, Apple a2){
+        return a1.getWeight().compareTo(a2.getWeight());
+    }
+};
+\end{lstlisting}
 
-Acest set de date reprezintă starea unei pârtii de ski, caracterizată de 5 atribute, cu valorile corespunzătoare:\\
-temperature \{ hot, mild, cool \}\\
-windy \{ true, false \}\\
-outlook \{ sunny, overcast \}\\
-snowCover \{ low, medium, high \}\\
-rainfall \{ sleet, rain, snow, none \}\\
+With lambda expression:
+\begin{lstlisting}
+Comparator<Apple> byWeight =
+    (Apple a1, Apple a2) -> a1.getWeight().compareTo(a2.getWeight());
+\end{lstlisting}
 
-%-----------------------------------
-%	SUBSECTION 4
-%-----------------------------------
-\section{Algoritm de învățare a structurii}
+\subsection{Where and how to use lambdas}
 
-Odată reprezentate datele, avem nevoie de algoritmi specifici pentru a construi și inițializa structura rețelei Bayesiene.
+\paragraph{Functional interface} You can use a lambda expression in the context of a functional interface. A functional interface is an interface that specifies exactly one abstract method. You already know several other functional interfaces in the Java API such as Comparator and Runnable. Interfaces can now also have default methods (that is, a method with a body that provides some default implementation for a method in case it isn’t implemented by a class). An interface is still a functional interface if it has many default methods as long as it specifies only one abstract method. Lambda expressions let you provide the implementation of the abstract method of a functional interface directly inline and treat the whole expression as an instance of a functional interface (more technically speaking, an instance of a concrete implementation of the functional interface). You can achieve the same thing with an anonymous inner class, although it’s clumsier: you provide an implementation and instantiate it directly inline.
 
-Un exemplu de structură pentru setul de date despre starea pârtiei de ski poate fi observat în Figura ~\ref{fig:structure}.
+\paragraph{Function descriptor} The signature of the abstract method of the functional interface essentially describes the signature of the lambda expression. We call this abstract method a function descriptor. For example, the Runnable interface can be viewed as the signature of a function that accepts nothing and returns nothing (void) because it has only one abstract method called run, which accepts nothing and returns nothing (void). \cite{urma2014java}
 
-\begin{figure}[th]
-\centering
-\includegraphics[scale=0.4]{Figures/structure}
-\decoRule
-\caption{Strucura unei rețele bayesiene}
-\label{fig:structure}
-\end{figure}
+\section{Parallel streams}
 
-Unul dintre cei mai eficienți algoritmi pentru construirea structurii este algorimul K2, iar pentru calcul costului unui graf în cadrul algorimului de căutare, funcția de scor K2, propusă de Cooper and Herskovits (1992). \cite{carvalho2009scoring}
+Stream interface allows you to process its elements in parallel in a very convenient way: it’s possible to turn a collection into a parallel stream by invoking the method parallelStream on the collection source. A parallel stream is a stream that splits its elements into multiple chunks, processing each chunk with a different thread. Thus, you can automatically partition the workload of a given operation on all the cores of your multicore processor and keep all of them equally busy.
 
-\subsection{Algoritmul K2}
+Let’s suppose you need to write a method accepting a number n as argument and returning the sum of all the numbers from 1 to the given argument. A straightforward approach is to generate an infinite stream of numbers, limiting it to the passed number, and then reduce the resulting stream with a BinaryOperator that just sums two numbers, as follows:
 
-Algoritmul K2 începe cu o ordine dată a atributelor (noduri) și încearcă să adauge o muchie de la nodurile procesate la cel curent, astfel încât scorul rețelei să fie maxim.
+\begin{lstlisting}
+public static long sequentialSum(long n) {
+	return Stream.iterate(1L, i -> i + 1)
+				  .limit(n)
+				  .reduce(0L, Long::sum);
+}	
+\end{lstlisting}
 
-Numărul maxim de părinți poate fi restricționat pentru un nod (la 2 de exemplu) pentru a evita overfitting-ul. În funcția de scor K2 și în calcului tabelelor probabilităților condiționale se poate folosi estimatorul Laplace. \cite{ruiz2005illustration}
+In more traditional Java terms, this code is equivalent to its iterative counterpart:
+
+\begin{lstlisting}
+public static long iterativeSum(long n) {
+    long result = 0;
+    for (long i = 1L; i <= n; i++) {
+        result += i;
+    }
+    return result;
+}	
+\end{lstlisting}
+
+This operation seems to be a good candidate to leverage parallelization, especially for large values of n.
+
+You can make the former functional reduction process (that is, summing) run in parallel by turning the stream into a parallel one; call the method parallel on the sequential stream:
+
+\begin{lstlisting}
+public static long parallelSum(long n) {
+	return Stream.iterate(1L, i -> i + 1)
+				  .limit(n)
+				  .parallel()
+				  .reduce(0L, Long::sum);
+}	
+\end{lstlisting}
