@@ -170,4 +170,23 @@ To enable handling of several difficult syncronization situations easily, the fo
 
 \section{Using an Executor}
 
+The executor framework is a mechanism that allows you to separate thread creation and management for the implementation of concurrent tasks. You don't have to worry about the creation and management of threads, only about creating tasks and sending them to the executor. The main classes involved in this framework are \cite{FernandezGonzalez}:
+
+\begin{itemize}
+\item The Executor and ExecutorService interface
+\item ThreadPoolExecutor
+\item ScheduledThreadPoolExecutor
+\item Executors
+\item The Callable interface
+\item The Future interface
+\end{itemize}
+
 \section{Parallel Programming via the Fork/Join Framework}
+
+The fork/join framework was designed to recursively split a parallelizable task into smaller tasks and then combine the results of each subtask to produce the overall result. It’s an implementation of the ExecutorService interface, which distributes those subtasks to worker threads in a thread pool, called ForkJoinPool. To submit tasks to this pool, you have to create a subclass of RecursiveTask<R>, where R is the type of the result produced by the parallelized task (and each of its subtasks) or of RecursiveAction if the task returns no result (it could be updating other nonlocal structures, though). To define RecursiveTasks you need only implement its single abstract method, compute:
+
+\begin{lstlisting}
+	protected abstract R compute();
+\end{lstlisting}
+
+This method defines both the logic of splitting the task at hand into subtasks and the algorithm to produce the result of a single subtask when it’s no longer possible or convenient to further divide it. \cite{urma2014java}

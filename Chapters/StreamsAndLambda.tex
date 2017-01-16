@@ -87,3 +87,13 @@ public static long parallelSum(long n) {
 				  .reduce(0L, Long::sum);
 }	
 \end{lstlisting}
+
+Note that, in reality, calling the method parallel on a sequential stream doesn’t imply any concrete transformation on the stream itself. Internally, a boolean flag is set to signal that you want to run in parallel all the operations that follow the invocation to parallel. Similarly, you can turn a parallel stream into a sequential one by just invoking the method sequential on it.
+
+Parallel streams internally use the default ForkJoinPool, which by default has as many threads as you have processors, as returned by Runtime. getRuntime(). availableProcessors(). But you can change the size of this pool using the system property java. util. concurrent. ForkJoinPool. common. parallelism, as in the following example:
+
+\begin{lstlisting}
+	System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", "12");	
+\end{lstlisting}
+
+This is a global setting, so it will affect all the parallel streams in your code. Conversely, it currently isn’t possible to specify this value for a single parallel stream. In general, having the size of the ForkJoinPool equal to the number of processors on your machine is a meaningful default.
